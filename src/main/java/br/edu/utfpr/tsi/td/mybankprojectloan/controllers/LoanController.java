@@ -19,26 +19,24 @@ public class LoanController {
     }
 
     public Loan criar(int clientId, float value, int parcels, Calendar startDate, int loanType) {
-        if(parcels <= LoanConfigEnum.MIN_PARCEL || parcels > LoanConfigEnum.MAX_PARCEL) {
+        if(parcels <= LoanConfigEnum.MIN_PARCEL.getValor() || parcels > LoanConfigEnum.MAX_PARCEL.getValor()) {
             throw new IllegalArgumentException("Número de parcelas inválido");
         }
-        if(value < LoanConfigEnum.MIN_VALUE || value > LoanConfigEnum.MAX_VALUE) {
+        if(value < LoanConfigEnum.MIN_VALUE.getValor() || value > LoanConfigEnum.MAX_VALUE.getValor()) {
             throw new IllegalArgumentException("Valor do empréstimo inválido");
         }
         double totalValue = calculateTotalValueWithTax(value, parcels, loanType );
-        if(totalValue/parcels < LoanConfigEnum.MIN_PARCEL_VALUE) {
+        if(totalValue/parcels < LoanConfigEnum.MIN_PARCEL_VALUE.getValor()) {
             throw new IllegalArgumentException("Valor da parcela inválido");
         }
         double parcelValue = totalValue/parcels;
         List<Parcel> parcelList = createParcelList(parcelValue, parcels, startDate, loanType);
-        Loan loan = new Loan(nextId, value, clientId, loanType, LoanStatusEnum.PENDENTE, parcelList);
+        Loan loan = new Loan(nextId, value, clientId, loanType, LoanStatusEnum.PENDENTE.getValor(), parcelList);
 
         nextId++;
         loanDAO.criar(loan);
         return loan;
         //generate loan
-
-
     }
 
     public void atualizar(int id, Loan loan) {
@@ -153,15 +151,14 @@ public class LoanController {
 
     private double taxFromLoantype(int loanType) {
         switch (loanType) {
-            case LoanTypeEnum.EMPRESTIMO_PESSOAL:
-                return LoanTaxEnum.EMPRESTIMO_PESSOAL;
-                break;
-            case LoanTypeEnum.EMPRESTIMO_IMOBILIARIO:
-                return LoanTaxEnum.EMPRESTIMO_IMOBILIARIO;
-                break;
-            case LoanTypeEnum.EMPRESTIMO_CONSIGNADO:
-                return LoanTaxEnum.EMPRESTIMO_CONSIGNADO;
-                break;
+            case 1:
+                return LoanTaxEnum.EMPRESTIMO_PESSOAL.ordinal();
+            case 2:
+                return LoanTaxEnum.EMPRESTIMO_IMOBILIARIO.ordinal();
+            case 3:
+                return LoanTaxEnum.EMPRESTIMO_CONSIGNADO.ordinal();
+            default:
+                return 0.0;
         }
     }
 

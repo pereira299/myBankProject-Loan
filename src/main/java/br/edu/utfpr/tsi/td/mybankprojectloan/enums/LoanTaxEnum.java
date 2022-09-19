@@ -1,7 +1,17 @@
 package br.edu.utfpr.tsi.td.mybankprojectloan.enums;
 
 public enum LoanTaxEnum {
-    public static final double EMPRESTIMO_PESSOAL = 0.08;
-    public static final double EMPRESTIMO_IMOBILIARIO = 0.06;
-    public static final double EMPRESTIMO_CONSIGNADO = 0.04;
+    EMPRESTIMO_PESSOAL(0.08),
+    EMPRESTIMO_IMOBILIARIO(0.06),
+    EMPRESTIMO_CONSIGNADO(0.04);
+
+    private final double valor;
+
+    LoanTaxEnum(double valor) {
+        this.valor = valor;
+    }
+
+    public double getValor() {
+        return valor;
+    }
 }
