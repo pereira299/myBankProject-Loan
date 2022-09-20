@@ -1,8 +1,17 @@
 package br.edu.utfpr.tsi.td.mybankprojectloan.enums;
 
-public class ParcelStatusEnum {
-    public static final int PENDENTE = 1;
-    public static final int PAGO = 2;
-    public static final int VENCIDO = 3;
+public enum ParcelStatusEnum {
+    PENDENTE(1),
+    PAGO(2),
+    VENCIDO(3);
 
+    private final int valor;
+
+    ParcelStatusEnum(int valor) {
+        this.valor = valor;
+    }
+
+    public int getValor() {
+        return valor;
+    }
 }

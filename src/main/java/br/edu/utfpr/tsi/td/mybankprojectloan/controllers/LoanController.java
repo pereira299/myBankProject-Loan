@@ -5,7 +5,6 @@ import br.edu.utfpr.tsi.td.mybankprojectloan.domains.Parcel;
 import br.edu.utfpr.tsi.td.mybankprojectloan.enums.*;
 import br.edu.utfpr.tsi.td.mybankprojectloan.enums.LoanTaxEnum;
 import br.edu.utfpr.tsi.td.mybankprojectloan.models.ILoanDAO;
-import br.edu.utfpr.tsi.td.mybankprojectloan.models.LoanDAO;
 
 import java.util.Calendar;
 import java.util.List;
@@ -14,8 +13,9 @@ import java.util.stream.Collectors;
 public class LoanController {
     private static int nextId = 1;
     private ILoanDAO loanDAO;
-    public LoanController() {
-        this.loanDAO = new LoanDAO();
+
+    public LoanController(ILoanDAO loanDAO) {
+        this.loanDAO = loanDAO;
     }
 
     public Loan criar(int clientId, float value, int parcels, Calendar startDate, int loanType) {
@@ -66,7 +66,7 @@ public class LoanController {
             throw new IllegalArgumentException("Não há parcelas pendentes");
         }
         Parcel parcel = parcels.get(0);
-        parcel.setParcelStatusId(ParcelStatusEnum.PAGO);
+        parcel.setParcelStatusId(ParcelStatusEnum.PAGO.getValor());
     }
 
     public void pagarParcela(int qtd, int id) {
@@ -79,7 +79,7 @@ public class LoanController {
         }
         for(int i = 0; i < qtd; i++) {
             Parcel parcel = parcels.get(i);
-            parcel.setParcelStatusId(ParcelStatusEnum.PAGO);
+            parcel.setParcelStatusId(ParcelStatusEnum.PAGO.getValor());
         }
     }
 
@@ -90,21 +90,21 @@ public class LoanController {
             throw new IllegalArgumentException("Não há parcelas pendentes");
         }
         for(Parcel parcel : parcels) {
-            parcel.setParcelStatusId(ParcelStatusEnum.PAGO);
+            parcel.setParcelStatusId(ParcelStatusEnum.PAGO.getValor());
         }
     }
 
     public List<Parcel> getParcelasPendentes(int id) {
         Loan loan = this.loanDAO.buscar(id);
         return loan.getParcels().stream()
-                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PENDENTE)
+                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PENDENTE.getValor())
                 .collect(Collectors.toList());
     }
 
     public List<Parcel> getParcelasPagas(int id) {
         Loan loan = this.loanDAO.buscar(id);
         return loan.getParcels().stream()
-                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PAGO)
+                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PAGO.getValor())
                 .collect(Collectors.toList());
     }
 
@@ -121,7 +121,7 @@ public class LoanController {
     public double getValorPago(int id) {
         Loan loan = this.loanDAO.buscar(id);
         return loan.getParcels().stream()
-                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PAGO)
+                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PAGO.getValor())
                 .mapToDouble(Parcel::getValue)
                 .sum();
     }
@@ -129,7 +129,7 @@ public class LoanController {
     public double getValorPendente(int id) {
         Loan loan = this.loanDAO.buscar(id);
         return loan.getParcels().stream()
-                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PENDENTE)
+                .filter(parcel -> parcel.getParcelStatusId() == ParcelStatusEnum.PENDENTE.getValor())
                 .mapToDouble(Parcel::getValue)
                 .sum();
     }
@@ -139,7 +139,7 @@ public class LoanController {
         List<Parcel> parcelList = null;
         Calendar expirationDate = startDate;
         for(int i = 0; i < parcels; i++) {
-            Parcel parcel = new Parcel(i, (float) parcelValue, tax, expirationDate, nextId, ParcelStatusEnum.PENDENTE);
+            Parcel parcel = new Parcel(i, (float) parcelValue, tax, expirationDate, nextId, ParcelStatusEnum.PENDENTE.getValor());
             expirationDate.add(Calendar.MONTH, 1);
         }
         return parcelList;
